@@ -1,0 +1,19 @@
+body {
+  max-width: 45em;
+  margin: 2em auto;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+pre {
+  background: #eee;
+  text-align: left;
+}
+
+p {
+  text-align: left;
+}
+
+img {
+  max-width: 100%;
+}
