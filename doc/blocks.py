@@ -40,7 +40,7 @@ class Text(object):
     lines = tools.strip_empty_lines(self.lines)
     if not lines:
       return []
-    return '<p>' + ' '.join(lines) + '</p>'
+    return '<div class="markdown">' + '\n'.join(lines) + '</div>'
 
 
 class Image(object):

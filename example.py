@@ -5,6 +5,8 @@ import doc
 document = doc.Document('output')
 
 """
+# Welcome
+
 Top-level docstrings are formatted as Markdown text cells.
 """
 

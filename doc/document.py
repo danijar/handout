@@ -30,17 +30,25 @@ class Document(object):
         style or os.path.join(datadir, 'style.css'),
         os.path.join(self._directory, 'style.css'))
     shutil.copyfile(
-        os.path.join(datadir, 'github.css'),
+        os.path.join(datadir, 'highlight.css'),
         os.path.join(self._directory, 'highlight.css'))
     shutil.copyfile(
         os.path.join(datadir, 'highlight.js'),
         os.path.join(self._directory, 'highlight.js'))
+    shutil.copyfile(
+        os.path.join(datadir, 'marked.js'),
+        os.path.join(self._directory, 'marked.js'))
+    shutil.copyfile(
+        os.path.join(datadir, 'script.js'),
+        os.path.join(self._directory, 'script.js'))
 
   def _generate(self, info, source):
     content = []
     content.append(blocks.Html([
         '<link rel="stylesheet" href="style.css">',
         '<link rel="stylesheet" href="highlight.css">',
+        '<script src="marked.js"></script>',
+        '<script src="script.js"></script>',
         '<script src="highlight.js"></script>',
         '<script>hljs.initHighlightingOnLoad();</script>',
     ]))
