@@ -1,3 +1,13 @@
+@media print {
+   html, html > body {
+     background: #fff !important;
+     margin: 0;
+     padding: 0;
+     max-width: auto;
+     border: none;
+   }
+}
+
 html {
   background: #eee;
 }
@@ -8,7 +18,7 @@ body {
   padding: 3em;
   text-align: left;
   font-size: 16px;
-  font-family: Tahoma, Geneva, sans-serif;
+  font-family: Helvetica, sans-serif;
   background: #fff;
   border-radius: .3em;
   border: 1px solid #ddd;
