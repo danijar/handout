@@ -11,16 +11,19 @@ Top-level docstrings are formatted as Markdown text cells.
 """
 
 fig, ax = plt.subplots()
-ax.plot(np.sin(np.arange(100)))
+ax.plot(np.arange(100))
 
-document.figure(fig)  # This line shows the inline figure instead.
+document.display(fig)  # This line shows the inline figure instead.
 
 """
 Another plot.
 """
 
-fig, ax = plt.subplots()
-ax.plot(np.arange(100))
-document.figure(fig)
+for iteration in range(3):
+  fig, ax = plt.subplots()
+  x = np.arange(100) / (iteration + 1)
+  y = np.sin(x)
+  ax.plot(x, y)
+  document.display(fig)
 
 document.save()
