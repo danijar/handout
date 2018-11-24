@@ -52,4 +52,4 @@ class Image(object):
     raise NotImplementedError()
 
   def render(self):
-    return '<img src="{}" />'.format(self.filename)
+    return '<center><img src="{}" /></center>'.format(self.filename)
