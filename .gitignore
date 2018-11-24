@@ -13,5 +13,9 @@ pip-selfcheck.json
 /dist
 *.eggs
 
-# Project
-output
+# Mac
+.DS_Store
+
+# Example
+/output
+
