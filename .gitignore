@@ -14,4 +14,4 @@ pip-selfcheck.json
 *.eggs
 
 # Project
-report
+output
