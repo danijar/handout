@@ -8,7 +8,7 @@ import handout
 import matplotlib.pyplot as plt
 import numpy as np
 
-"""Start your handout by passing an output directory."""
+"""Start your handout with an output directory."""
 
 doc = handout.Handout('output')
 
@@ -66,8 +66,8 @@ value = 13  # handout=exclude
 """
 ## View the handout
 
-When you're done, save the handout and open output/index.html in your browser.
-You can also pass your own CSS style file to this function.
+Save the handout at the end of your script. Then open `output/index.html` in
+your browser.
 """
 
 doc.save()

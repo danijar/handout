@@ -16,7 +16,7 @@ body {
   max-width: 45em;
   margin: 2em auto;
   padding: 3em;
-  text-align: left;
+  text-align: center;
   font-size: 16px;
   font-family: Helvetica, sans-serif;
   background: #fff;
@@ -30,7 +30,7 @@ code {
   border: 1px solid #eee;
 }
 
-p {
+p, .markdown {
   text-align: left;
 }
 
