@@ -53,3 +53,15 @@ class Image(object):
 
   def render(self):
     return '<center><img src="{}" /></center>'.format(self.filename)
+
+
+class Message(object):
+
+  def __init__(self, lines=None):
+    self.lines = lines or []
+
+  def append(self, line):
+    self.lines.append(line)
+
+  def render(self):
+    return '<pre><p class="message">' + ''.join(self.lines) + '</p></pre>'

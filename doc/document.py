@@ -1,7 +1,10 @@
+import collections
 import glob
 import inspect
+import io
 import os
 import shutil
+import sys
 
 from doc import blocks
 
@@ -15,11 +18,21 @@ class Document(object):
     if os.path.exists(self._figdir):
       shutil.rmtree(self._figdir)
     os.makedirs(self._figdir)
+    self._messages = collections.defaultdict(list)
 
   def display(self, figure):
     info = self._get_user_frame_info()
     filename = self._next_image_name(info.filename, info.lineno)
     figure.savefig(filename)
+
+  def write(self, *args, **kwargs):
+    stream = io.StringIO()
+    if kwargs.get('file', sys.stdout) == sys.stdout:
+      kwargs['file'] = stream
+    print(*args, **kwargs)  # Print into custom stream.
+    message = stream.getvalue()
+    info = self._get_user_frame_info()
+    self._messages[(info.filename, info.lineno)].append(message)
 
   def save(self, name='index.html', style=None):
     info = self._get_user_frame_info()
@@ -60,10 +73,22 @@ class Document(object):
     for lineno, line in enumerate(source.split('\n')):
       lineno += 1  # Line numbers are 1-based indices.
       line = line.rstrip()
-      if isinstance(content[-1], blocks.Code) and line.startswith('"""'):
-        content.append(blocks.Text())
+      if line.endswith('# report=exclude'):
         continue
+      if isinstance(content[-1], blocks.Code) and line.startswith('"""'):
+        line = line[3:]
+        content.append(blocks.Text())
       if isinstance(content[-1], blocks.Text) and line.endswith('"""'):
+        line = line[:-3]
+        content[-1].append(line)
+        content.append(blocks.Code())
+        continue
+      content[-1].append(line)
+      messages = self._messages[(info.filename, lineno)]
+      if isinstance(content[-1], blocks.Code) and messages:
+        content.append(blocks.Message())
+        for message in messages:
+          content[-1].append(message)
         content.append(blocks.Code())
         continue
       filenames = self._find_image_names(info.filename, lineno)
@@ -71,14 +96,8 @@ class Document(object):
         for filename in filenames:
           filename = os.path.relpath(filename, self._outdir)
           content.append(blocks.Image(filename))
-          content.append(blocks.Code())
+        content.append(blocks.Code())
         continue
-      if lineno == info.lineno:
-        # Skip `doc.save()` line.
-        assert isinstance(content[-1], blocks.Code)
-        continue
-      assert isinstance(content[-1], (blocks.Code, blocks.Text))
-      content[-1].append(line)
     return '\n'.join(block.render() for block in content)
 
   def _next_image_name(self, filename, lineno):
