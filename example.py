@@ -1,7 +1,9 @@
 """
 # Python Handout v0.2.0
 
-Combine source code, Markdown text, and figures.
+Turn your Python script into a handout with Markdown text and inline figures.
+An alternative to notebooks without hidden state and using your own text
+editor.
 """
 
 import handout
