@@ -1,13 +1,23 @@
+html {
+  background: #eee;
+}
+
 body {
   max-width: 45em;
   margin: 2em auto;
+  padding: 3em;
   text-align: left;
-  font-family: sans-serif;
+  font-size: 16px;
+  font-family: Tahoma, Geneva, sans-serif;
+  background: #fff;
+  border-radius: .3em;
+  border: 1px solid #ddd;
 }
 
-pre {
-  background: #eee;
+code {
   text-align: left;
+  border-radius: .25em;
+  border: 1px solid #eee;
 }
 
 p {
