@@ -23,13 +23,24 @@ class Document(object):
     filename = os.path.join(self._directory, name)
     with open(filename, 'w') as f:
       f.write(output)
-    if not style:
-      style = os.path.join(os.path.dirname(__file__), 'style.css')
-    shutil.copyfile(style, os.path.join(self._directory, 'style.css'))
+    shutil.copyfile(
+        style or os.path.join(os.path.dirname(__file__), 'style.css'),
+        os.path.join(self._directory, 'style.css'))
+    shutil.copyfile(
+        os.path.join(os.path.dirname(__file__), 'github.css'),
+        os.path.join(self._directory, 'highlight.css'))
+    shutil.copyfile(
+        os.path.join(os.path.dirname(__file__), 'highlight.js'),
+        os.path.join(self._directory, 'highlight.js'))
 
   def _generate(self, info, source):
     blocks = []
-    blocks.append(Html(['<link rel="stylesheet" href="style.css">']))
+    blocks.append(Html([
+        '<link rel="stylesheet" href="style.css">',
+        '<link rel="stylesheet" href="highlight.css">',
+        '<script src="highlight.pack.js"></script>',
+        '<script>hljs.initHighlightingOnLoad();</script>',
+    ]))
     blocks.append(Code())
     for lineno, line in enumerate(source.split('\n')):
       lineno += 1  # Line numbers are 1-based indices.
@@ -52,10 +63,7 @@ class Document(object):
         continue
       assert isinstance(blocks[-1], (Code, Text))
       blocks[-1].append(line)
-    output = []
-    for block in blocks:
-      output += block.render()
-    return '\n'.join(output)
+    return '\n'.join(block.render() for block in blocks)
 
   def _get_image_name(self, filename, lineno):
     filename = '{}-L{}.png'.format(filename, lineno)
@@ -78,7 +86,7 @@ class Html(object):
     self.lines.append(line)
 
   def render(self):
-    return strip_empty_lines(self.lines)
+    return '\n'.join(strip_empty_lines(self.lines))
 
 
 class Code(object):
@@ -90,10 +98,10 @@ class Code(object):
     self.lines.append(line)
 
   def render(self):
-    lines = strip_empty_lines(self.lines)
+    lines = '\n'.join(strip_empty_lines(self.lines))
     if not lines:
-      return []
-    return ['<pre>'] + lines + ['</pre>']
+      return ''
+    return '<pre><code class="python">' + lines + '</code></pre>'
 
 
 class Text(object):
@@ -108,7 +116,7 @@ class Text(object):
     lines = strip_empty_lines(self.lines)
     if not lines:
       return []
-    return ['<p>'] + lines + ['</p>']
+    return '<p>' + ' '.join(lines) + '</p>'
 
 
 class Image(object):
@@ -120,7 +128,7 @@ class Image(object):
     raise NotImplementedError()
 
   def render(self):
-    return ['<img src="{}" />'.format(self.filename)]
+    return '<img src="{}" />'.format(self.filename)
 
 
 def strip_empty_lines(lines):
