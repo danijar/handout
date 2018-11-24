@@ -28,38 +28,33 @@ class Document(object):
     shutil.copyfile(style, os.path.join(self._directory, 'style.css'))
 
   def _generate(self, info, source):
-    CODE, TEXT = 1, 2
-    output = ['<link rel="stylesheet" href="style.css">']
-    output.append('<pre>')
-    mode = CODE
+    blocks = []
+    blocks.append(Html(['<link rel="stylesheet" href="style.css">']))
+    blocks.append(Code())
     for lineno, line in enumerate(source.split('\n')):
       lineno += 1  # Line numbers are 1-based indices.
       line = line.rstrip()
-      if mode == CODE and line.startswith('"""'):
-        mode = TEXT
-        output.append('</pre>')
-        output.append('<p>')
+      if isinstance(blocks[-1], Code) and line.startswith('"""'):
+        blocks.append(Text())
         continue
-      if mode == TEXT and line.endswith('"""'):
-        mode = CODE
-        output.append('</p>')
-        output.append('<pre>')
+      if isinstance(blocks[-1], Text) and line.endswith('"""'):
+        blocks.append(Code())
         continue
       filename = self._get_image_name(info.filename, lineno)
       exists = os.path.exists(os.path.join(self._directory, filename))
-      if mode == CODE and exists:
-        output.append('</pre>')
-        output.append('<img src="{}" />'.format(filename))
-        output.append('<pre>')
+      if isinstance(blocks[-1], Code) and exists:
+        blocks.append(Image(filename))
+        blocks.append(Code())
         continue
       if lineno == info.lineno:
-        assert mode == CODE
+        # Skip `doc.save()` line.
+        assert isinstance(blocks[-1], Code)
         continue
-      output.append(line)
-    if output[-1] == '<pre>':
-      output = output[:-1]
-    else:
-      output.append('</pre>')
+      assert isinstance(blocks[-1], (Code, Text))
+      blocks[-1].append(line)
+    output = []
+    for block in blocks:
+      output += block.render()
     return '\n'.join(output)
 
   def _get_image_name(self, filename, lineno):
@@ -74,13 +69,71 @@ class Document(object):
     return info
 
 
+class Html(object):
+
+  def __init__(self, lines=None):
+    self.lines = lines or []
+
+  def append(self, line):
+    self.lines.append(line)
+
+  def render(self):
+    return strip_empty_lines(self.lines)
+
+
 class Code(object):
 
-  def __init__(self, lines):
-    self.lines = lines
+  def __init__(self, lines=None):
+    self.lines = lines or []
+
+  def append(self, line):
+    self.lines.append(line)
+
+  def render(self):
+    lines = strip_empty_lines(self.lines)
+    if not lines:
+      return []
+    return ['<pre>'] + lines + ['</pre>']
 
 
 class Text(object):
 
-  def __init__(self, lines):
-    self.lines = lines
+  def __init__(self, lines=None):
+    self.lines = lines or []
+
+  def append(self, line):
+    self.lines.append(line)
+
+  def render(self):
+    lines = strip_empty_lines(self.lines)
+    if not lines:
+      return []
+    return ['<p>'] + lines + ['</p>']
+
+
+class Image(object):
+
+  def __init__(self, filename):
+    self.filename = filename
+
+  def append(self, line):
+    raise NotImplementedError()
+
+  def render(self):
+    return ['<img src="{}" />'.format(self.filename)]
+
+
+def strip_empty_lines(lines):
+  output = []
+  for line in lines:
+    if not line and not output:
+      continue
+    output.append(line)
+  lines = reversed(output)
+  output = []
+  for line in lines:
+    if not line and not output:
+      continue
+    output.append(line)
+  lines = reversed(output)
+  return list(lines)
