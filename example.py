@@ -1,8 +1,8 @@
 """
 # Python Handout
 
-Turn your Python script into a handout with Markdown text and inline figures.
-An alternative to notebooks without hidden state and using your own text
+Turn Python scripts into handouts with Markdown comments and inline figures. An
+alternative to Jupyter notebooks without hidden state and using your own text
 editor.
 """
 
@@ -51,9 +51,7 @@ doc.display(fig)  # Display the figure below this line.
 
 for iteration in range(3):
   fig, ax = plt.subplots(figsize=(3, 2))
-  x = np.arange(100) / (iteration + 1)
-  y = np.sin(x)
-  ax.plot(x, y)
+  ax.plot(np.sin(np.arange(100) / (iteration + 1)))
   doc.display(fig, width=0.33)
 
 """
