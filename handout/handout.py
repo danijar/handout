@@ -16,6 +16,11 @@ class Handout(object):
     os.makedirs(self._directory, exist_ok=True)
     self._messages = collections.defaultdict(list)
     self._images = collections.defaultdict(list)
+    for info in inspect.stack():
+      if info.filename == __file__:
+        continue
+      self._used_from = info.filename
+      break
 
   def display(self, figure, width=None):
     info = self._get_user_frame_info()
@@ -102,7 +107,11 @@ class Handout(object):
 
   def _get_user_frame_info(self):
     for info in inspect.stack():
-      if info.filename == __file__:
-        continue
-      break
-    return info
+      if info.filename == self._used_from:
+        return info
+    message = (
+        "Handout object was created in '{}' and accessed in '{}'. The file in "
+        "which you create the handout will be rendered. Thus, it only makes "
+        "sense to add to the handout from this file or functions called from "
+        "this file. You should not pass the handout object to a parent file.")
+    raise RuntimeError(message.format(self._used_from, info.filename))
