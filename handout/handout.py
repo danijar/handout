@@ -2,6 +2,7 @@ import collections
 import glob
 import inspect
 import io
+import logging
 import os
 import shutil
 import sys
@@ -16,6 +17,7 @@ class Handout(object):
     os.makedirs(self._directory, exist_ok=True)
     self._logs = collections.defaultdict(list)
     self._images = collections.defaultdict(list)
+    self._logger = logging.getLogger('handout')
     for info in inspect.stack():
       if info.filename == __file__:
         continue
@@ -29,6 +31,7 @@ class Handout(object):
     filename = os.path.join(self._directory, filename)
     self._images[(info.filename, info.lineno)].append((filename, width))
     figure.savefig(filename)
+    self._logger.info('Saved figure: {}'.format(filename))
 
   def write(self, *args, **kwargs):
     stream = io.StringIO()
@@ -38,6 +41,7 @@ class Handout(object):
     log = stream.getvalue()
     info = self._get_user_frame_info()
     self._logs[(info.filename, info.lineno)].append(log)
+    self._logger.info(log.rstrip('\n'))
 
   def save(self, name='index.html', style=None):
     info = self._get_user_frame_info()
@@ -63,6 +67,7 @@ class Handout(object):
     shutil.copyfile(
         os.path.join(datadir, 'script.js'),
         os.path.join(self._directory, 'script.js'))
+    self._logger.info("Handout written to: {}".format(filename))
 
   def _generate(self, info, source):
     content = []
@@ -113,7 +118,6 @@ class Handout(object):
         '</body>',
         '</html>',
     ]))
-
     return ''.join(block.render() for block in content)
 
   def _get_user_frame_info(self):
