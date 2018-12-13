@@ -12,8 +12,8 @@ html {
   background: #eee;
 }
 
-body {
-  max-width: 45em;
+article {
+  max-width: 48.5em;  /* Fit 79 characters. */
   margin: 2em auto;
   padding: 3em;
   text-align: center;
@@ -24,14 +24,18 @@ body {
   border: 1px solid #ddd;
 }
 
+article > * {
+  text-align: left;
+}
+
 code {
   text-align: left;
   border-radius: .25em;
   border: 1px solid #eee;
 }
 
-p, .markdown {
-  text-align: left;
+.log {
+  overflow: auto;
 }
 
 img {

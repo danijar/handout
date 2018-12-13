@@ -61,7 +61,7 @@ class Image(object):
     return output
 
 
-class Message(object):
+class Log(object):
 
   def __init__(self, lines=None):
     self._lines = lines or []
@@ -70,4 +70,10 @@ class Message(object):
     self._lines.append(line)
 
   def render(self):
-    return '<pre><p class="message">' + ''.join(self._lines) + '</p></pre>'
+    lines = []
+    for line in self._lines:
+      while len(line.rstrip('\n')) > 79:
+        lines.append(line[:79] + '\n')
+        line = line[79:]
+      lines.append(line)
+    return '<pre class="log">' + ''.join(lines) + '</pre>'

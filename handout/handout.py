@@ -14,7 +14,7 @@ class Handout(object):
   def __init__(self, directory):
     self._directory = os.path.expanduser(directory)
     os.makedirs(self._directory, exist_ok=True)
-    self._messages = collections.defaultdict(list)
+    self._logs = collections.defaultdict(list)
     self._images = collections.defaultdict(list)
     for info in inspect.stack():
       if info.filename == __file__:
@@ -35,9 +35,9 @@ class Handout(object):
     if kwargs.get('file', sys.stdout) == sys.stdout:
       kwargs['file'] = stream
     print(*args, **kwargs)  # Print into custom stream.
-    message = stream.getvalue()
+    log = stream.getvalue()
     info = self._get_user_frame_info()
-    self._messages[(info.filename, info.lineno)].append(message)
+    self._logs[(info.filename, info.lineno)].append(log)
 
   def save(self, name='index.html', style=None):
     info = self._get_user_frame_info()
@@ -67,12 +67,17 @@ class Handout(object):
   def _generate(self, info, source):
     content = []
     content.append(blocks.Html([
+        '<html>',
+        '<head>',
         '<link rel="stylesheet" href="style.css">',
         '<link rel="stylesheet" href="highlight.css">',
         '<script src="marked.js"></script>',
         '<script src="script.js"></script>',
         '<script src="highlight.js"></script>',
         '<script>hljs.initHighlightingOnLoad();</script>',
+        '</head>',
+        '<body>',
+        '<article>',
     ]))
     content.append(blocks.Code())
     for lineno, line in enumerate(source.split('\n')):
@@ -89,11 +94,11 @@ class Handout(object):
         content.append(blocks.Code())
         continue
       content[-1].append(line)
-      messages = self._messages[(info.filename, lineno)]
-      if isinstance(content[-1], blocks.Code) and messages:
-        content.append(blocks.Message())
-        for message in messages:
-          content[-1].append(message)
+      logs = self._logs[(info.filename, lineno)]
+      if isinstance(content[-1], blocks.Code) and logs:
+        content.append(blocks.Log())
+        for log in logs:
+          content[-1].append(log)
         content.append(blocks.Code())
         continue
       images = self._images[(info.filename, lineno)]
@@ -103,6 +108,12 @@ class Handout(object):
           content.append(blocks.Image(filename, width))
         content.append(blocks.Code())
         continue
+    content.append(blocks.Html([
+        '</article>',
+        '</body>',
+        '</html>',
+    ]))
+
     return ''.join(block.render() for block in content)
 
   def _get_user_frame_info(self):
