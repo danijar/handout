@@ -25,7 +25,8 @@ class Code(object):
     lines = '\n'.join(tools.strip_empty_lines(self._lines))
     if not lines:
       return ''
-    return '<pre><code class="python">' + lines + '</code></pre>'
+    lines = lines.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return '<pre><code class="python">' + lines + '</code></pre>\n'
 
 
 class Text(object):
@@ -37,10 +38,11 @@ class Text(object):
     self._lines.append(line)
 
   def render(self):
-    lines = tools.strip_empty_lines(self._lines)
+    lines = '\n'.join(tools.strip_empty_lines(self._lines))
     if not lines:
-      return []
-    return '<div class="markdown">' + '\n'.join(lines) + '</div>'
+      return ''
+    lines = lines.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return '<div class="markdown">' + lines + '</div>\n'
 
 
 class Image(object):
@@ -61,7 +63,7 @@ class Image(object):
     return output
 
 
-class Log(object):
+class Message(object):
 
   def __init__(self, lines=None):
     self._lines = lines or []
@@ -76,4 +78,4 @@ class Log(object):
         lines.append(line[:79] + '\n')
         line = line[79:]
       lines.append(line)
-    return '<pre class="log">' + ''.join(lines) + '</pre>'
+    return '<pre class="message">' + ''.join(lines) + '</pre>\n'
