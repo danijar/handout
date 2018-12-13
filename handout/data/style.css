@@ -1,11 +1,11 @@
 @media print {
-   html, html > body {
-     background: #fff !important;
-     margin: 0;
-     padding: 0;
-     max-width: auto;
-     border: none;
-   }
+  html, article {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: auto !important;
+    border: none !important;
+  }
 }
 
 html {
@@ -36,6 +36,7 @@ code {
 
 .message {
   overflow: auto;
+  margin: 0;
 }
 
 img {

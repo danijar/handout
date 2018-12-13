@@ -15,9 +15,7 @@ class Handout(object):
   def __init__(self, directory):
     self._directory = os.path.expanduser(directory)
     os.makedirs(self._directory, exist_ok=True)
-    self._messages = collections.defaultdict(list)
-    self._htmls = collections.defaultdict(list)
-    self._images = collections.defaultdict(list)
+    self._blocks = collections.defaultdict(list)
     self._logger = logging.getLogger('handout')
     for info in inspect.stack():
       if info.filename == __file__:
@@ -32,20 +30,25 @@ class Handout(object):
     print(*args, **kwargs)  # Print into custom stream.
     message = stream.getvalue()
     info = self._get_user_frame_info()
-    self._messages[(info.filename, info.lineno)].append(message)
+    block = blocks.Message([message])
+    self._blocks[(info.filename, info.lineno)].append(block)
     self._logger.info(message.rstrip('\n'))
 
-  def html(self, *lines):
+  def html(self, string):
     info = self._get_user_frame_info()
-    self._htmls[(info.filename, info.lineno)].append(lines)
-    self._logger.info(lines)
+    block = blocks.Html([string])
+    self._blocks[(info.filename, info.lineno)].append(block)
+    self._logger.info(string)
 
   def display(self, figure, width=None):
     info = self._get_user_frame_info()
-    index = len(self._images[(info.filename, info.lineno)])
+    existing = self._blocks[(info.filename, info.lineno)]
+    existing = [block for block in existing if isinstance(block, blocks.Image)]
+    index = len(existing)
     filename = '{}-L{}-{}.png'.format(info.filename, info.lineno, index)
+    block = blocks.Image(filename, width)
+    self._blocks[(info.filename, info.lineno)].append(block)
     filename = os.path.join(self._directory, filename)
-    self._images[(info.filename, info.lineno)].append((filename, width))
     figure.savefig(filename)
     self._logger.info('Saved figure: {}'.format(filename))
 
@@ -80,6 +83,7 @@ class Handout(object):
     content.append(blocks.Html([
         '<html>',
         '<head>',
+        '<title>Handout</title>',
         '<link rel="stylesheet" href="style.css">',
         '<link rel="stylesheet" href="highlight.css">',
         '<script src="marked.js"></script>',
@@ -104,22 +108,10 @@ class Handout(object):
         continue
       if not line.endswith('# handout=exclude'):
         content[-1].append(line)
-      messages = self._messages[(info.filename, lineno)]
-      if isinstance(content[-1], blocks.Code) and messages:
-        content.append(blocks.Message())
-        for message in messages:
-          content[-1].append(message)
-        content.append(blocks.Code())
-      htmls = self._htmls[(info.filename, lineno)]
-      if isinstance(content[-1], blocks.Code) and htmls:
-        for html in htmls:
-          content.append(blocks.Html(html))
-        content.append(blocks.Code())
-      images = self._images[(info.filename, lineno)]
-      if isinstance(content[-1], blocks.Code) and images:
-        for filename, width in images:
-          filename = os.path.relpath(filename, self._directory)
-          content.append(blocks.Image(filename, width))
+      blocks_ = self._blocks[(info.filename, lineno)]
+      if blocks_:
+        for block in blocks_:
+          content.append(block)
         content.append(blocks.Code())
     content.append(blocks.Html([
         '</article>',
