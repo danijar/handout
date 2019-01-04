@@ -20,8 +20,11 @@ class Handout(object):
     for info in inspect.stack():
       if info.filename == __file__:
         continue
-      self._used_from = info.filename
       break
+    module = inspect.getmodule(info.frame)
+    self._source_name = info.filename
+    self._source_text = inspect.getsource(module)
+    self._num_figures = 0
 
   def write(self, *args, **kwargs):
     stream = io.StringIO()
@@ -29,35 +32,26 @@ class Handout(object):
       kwargs['file'] = stream
     print(*args, **kwargs)  # Print into custom stream.
     message = stream.getvalue()
-    info = self._get_user_frame_info()
     block = blocks.Message([message])
-    self._blocks[(info.filename, info.lineno)].append(block)
+    self._blocks[self._get_current_line()].append(block)
     self._logger.info(message.rstrip('\n'))
 
   def html(self, string):
-    info = self._get_user_frame_info()
     block = blocks.Html([string])
-    self._blocks[(info.filename, info.lineno)].append(block)
+    self._blocks[self._get_current_line()].append(block)
     self._logger.info(string)
 
   def display(self, figure, width=None):
-    info = self._get_user_frame_info()
-    existing = self._blocks[(info.filename, info.lineno)]
-    existing = [block for block in existing if isinstance(block, blocks.Image)]
-    index = len(existing)
-    filename = '{}-L{}-{}.png'.format(
-        self._clean_filename(info.filename), info.lineno, index)
+    filename = 'figure-{}.png'.format(self._num_figures)
     block = blocks.Image(filename, width)
-    self._blocks[(info.filename, info.lineno)].append(block)
+    self._blocks[self._get_current_line()].append(block)
     filename = os.path.join(self._directory, filename)
     figure.savefig(filename)
     self._logger.info('Saved figure: {}'.format(filename))
+    self._num_figures += 1
 
   def save(self, name='index.html', style=None):
-    info = self._get_user_frame_info()
-    module = inspect.getmodule(info.frame)
-    source = inspect.getsource(module)
-    output = self._generate(info, source)
+    output = self._generate(self._source_text)
     filename = os.path.join(self._directory, name)
     with open(filename, 'w') as f:
       f.write(output)
@@ -72,7 +66,7 @@ class Handout(object):
           os.path.join(self._directory, name))
     self._logger.info("Handout written to: {}".format(filename))
 
-  def _generate(self, info, source):
+  def _generate(self, source):
     content = []
     content.append(blocks.Html([
         '<html>',
@@ -103,7 +97,7 @@ class Handout(object):
         continue
       if not line.endswith('# handout=exclude'):
         content[-1].append(line)
-      blocks_ = self._blocks[(info.filename, lineno)]
+      blocks_ = self._blocks[lineno]
       if blocks_:
         for block in blocks_:
           content.append(block)
@@ -115,19 +109,13 @@ class Handout(object):
     ]))
     return ''.join(block.render() for block in content)
 
-  def _get_user_frame_info(self):
+  def _get_current_line(self):
     for info in inspect.stack():
-      if info.filename == self._used_from:
-        return info
+      if info.filename == self._source_name:
+        return info.lineno
     message = (
         "Handout object was created in '{}' and accessed in '{}'. The file in "
         "which you create the handout will be rendered. Thus, it only makes "
         "sense to add to the handout from this file or functions called from "
         "this file. You should not pass the handout object to a parent file.")
-    raise RuntimeError(message.format(self._used_from, info.filename))
-
-  def _clean_filename(self, filename):
-    if filename.startswith('./'):
-      filename = filename[2:]
-    filename = filename.replace(r'/', '-').replace(r'\\', '-')
-    return filename
+    raise RuntimeError(message.format(self._source_name, info.filename))

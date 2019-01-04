@@ -55,10 +55,10 @@ class Image(object):
     raise NotImplementedError()
 
   def render(self):
-    output = '<img '
-    output += 'src="{}"'.format(self._filename)
+    output = '<img'
+    output += ' src="{}"'.format(self._filename)
     if self._width:
-      output += 'width="{}%"'.format(round(100 * self._width, 2))
+      output += ' width="{}%"'.format(round(100 * self._width, 2))
     output += ' />'
     return output
 
