@@ -1,5 +1,7 @@
 # Python Handout
 
+[![PyPI](https://img.shields.io/pypi/v/handout.svg)](https://pypi.python.org/pypi/handout/#history)
+
 Turn Python scripts into handouts with Markdown comments and inline figures. An
 alternative to Jupyter notebooks without hidden state and using your own text
 editor.
