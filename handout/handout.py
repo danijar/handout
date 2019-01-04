@@ -65,18 +65,11 @@ class Handout(object):
     shutil.copyfile(
         style or os.path.join(datadir, 'style.css'),
         os.path.join(self._directory, 'style.css'))
-    shutil.copyfile(
-        os.path.join(datadir, 'highlight.css'),
-        os.path.join(self._directory, 'highlight.css'))
-    shutil.copyfile(
-        os.path.join(datadir, 'highlight.js'),
-        os.path.join(self._directory, 'highlight.js'))
-    shutil.copyfile(
-        os.path.join(datadir, 'marked.js'),
-        os.path.join(self._directory, 'marked.js'))
-    shutil.copyfile(
-        os.path.join(datadir, 'script.js'),
-        os.path.join(self._directory, 'script.js'))
+    names = 'highlight.css highlight.js marked.js script.js favicon.ico'
+    for name in names.split():
+      shutil.copyfile(
+          os.path.join(datadir, name),
+          os.path.join(self._directory, name))
     self._logger.info("Handout written to: {}".format(filename))
 
   def _generate(self, info, source):
@@ -87,6 +80,7 @@ class Handout(object):
         '<title>Handout</title>',
         '<link rel="stylesheet" href="style.css">',
         '<link rel="stylesheet" href="highlight.css">',
+        '<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">',
         '<script src="marked.js"></script>',
         '<script src="script.js"></script>',
         '<script src="highlight.js"></script>',
