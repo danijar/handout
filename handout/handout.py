@@ -45,7 +45,8 @@ class Handout(object):
     existing = self._blocks[(info.filename, info.lineno)]
     existing = [block for block in existing if isinstance(block, blocks.Image)]
     index = len(existing)
-    filename = '{}-L{}-{}.png'.format(info.filename, info.lineno, index)
+    filename = '{}-L{}-{}.png'.format(
+        self._clean_filename(info.filename), info.lineno, index)
     block = blocks.Image(filename, width)
     self._blocks[(info.filename, info.lineno)].append(block)
     filename = os.path.join(self._directory, filename)
@@ -130,3 +131,9 @@ class Handout(object):
         "sense to add to the handout from this file or functions called from "
         "this file. You should not pass the handout object to a parent file.")
     raise RuntimeError(message.format(self._used_from, info.filename))
+
+  def _clean_filename(self, filename):
+    if filename.startswith('./'):
+      filename = filename[2:]
+    filename = filename.replace(r'/', '-').replace(r'\\', '-')
+    return filename
