@@ -3,8 +3,9 @@
     background: #fff !important;
     margin: 0 !important;
     padding: 0 !important;
-    max-width: auto !important;
+    max-width: none !important;
     border: none !important;
+    font-size: 13px !important;
   }
 }
 
@@ -17,7 +18,7 @@ article {
   margin: 2em auto;
   padding: 3em;
   text-align: center;
-  font-size: 16px;
+  font-size: 15px;
   font-family: Helvetica, sans-serif;
   background: #fff;
   border-radius: .3em;
