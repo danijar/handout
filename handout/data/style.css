@@ -13,6 +13,13 @@ html {
   background: #eee;
 }
 
+h1 { font-size: 2.0em; }
+h2 { font-size: 1.5em; }
+h3 { font-size: 1.3em; }
+h4 { font-size: 1.2em; }
+h5 { font-size: 1.1em; }
+h6 { font-size: 1.0em; }
+
 article {
   max-width: 48.5em;  /* Fit 79 characters. */
   margin: 2em auto;

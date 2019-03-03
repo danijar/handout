@@ -16,6 +16,7 @@ class Handout(object):
     self._directory = os.path.expanduser(directory)
     os.makedirs(self._directory, exist_ok=True)
     self._blocks = collections.defaultdict(list)
+    self._pending = []
     self._logger = logging.getLogger('handout')
     for info in inspect.stack():
       if info.filename == __file__:
@@ -26,41 +27,42 @@ class Handout(object):
     self._source_text = inspect.getsource(module)
     self._num_figures = 0
 
-  def write(self, *args, **kwargs):
+  def add_text(self, *args, **kwargs):
     stream = io.StringIO()
     if kwargs.get('file', sys.stdout) == sys.stdout:
       kwargs['file'] = stream
     print(*args, **kwargs)  # Print into custom stream.
     message = stream.getvalue()
     block = blocks.Message([message])
-    self._blocks[self._get_current_line()].append(block)
+    self._pending.append(block)
     self._logger.info(message.rstrip('\n'))
 
-  def html(self, string):
+  def add_html(self, string):
     block = blocks.Html([string])
-    self._blocks[self._get_current_line()].append(block)
+    self._pending.append(block)
     self._logger.info(string)
 
-  def display(self, figure, width=None):
+  def add_figure(self, figure, width=None):
     filename = 'figure-{}.png'.format(self._num_figures)
     block = blocks.Image(filename, width)
-    self._blocks[self._get_current_line()].append(block)
+    self._pending.append(block)
     filename = os.path.join(self._directory, filename)
     figure.savefig(filename)
     self._logger.info('Saved figure: {}'.format(filename))
     self._num_figures += 1
 
-  def save(self, name='index.html', style=None):
+  def show(self):
+    self._blocks[self._get_current_line()] += self._pending
+    self._pending = []
     output = self._generate(self._source_text)
-    filename = os.path.join(self._directory, name)
+    filename = os.path.join(self._directory, 'index.html')
     with open(filename, 'w') as f:
       f.write(output)
     datadir = os.path.join(os.path.dirname(__file__), 'data')
-    shutil.copyfile(
-        style or os.path.join(datadir, 'style.css'),
-        os.path.join(self._directory, 'style.css'))
-    names = 'highlight.css highlight.js marked.js script.js favicon.ico'
-    for name in names.split():
+    names = [
+        'style.css', 'highlight.css', 'highlight.js', 'marked.js', 'script.js',
+        'favicon.ico']
+    for name in names:
       shutil.copyfile(
           os.path.join(datadir, name),
           os.path.join(self._directory, name))
@@ -95,7 +97,7 @@ class Handout(object):
         content[-1].append(line)
         content.append(blocks.Code())
         continue
-      if not line.endswith('# handout=exclude'):
+      if not line.endswith('# handout: exclude'):
         content[-1].append(line)
       blocks_ = self._blocks[lineno]
       if blocks_:

@@ -2,7 +2,7 @@
 # Python Handout
 
 Turn Python scripts into handouts with Markdown comments and inline figures. An
-alternative to Jupyter notebooks without hidden state and using your own text
+alternative to Jupyter notebooks without hidden state that supports any text
 editor.
 """
 
@@ -15,7 +15,7 @@ import numpy as np
 doc = handout.Handout('output')
 
 """
-## Markdown text
+## Markdown comments
 
 Comments with triple quotes are converted to text blocks.
 
@@ -26,48 +26,51 @@ Text blocks support [Markdown formatting][1], for example:
 - Inline `code()` snippets
 - **Bold** and *italic*
 
-[1]: https://commonmark.org
+[1]: https://commonmark.org/help/
 """
 
 """
-## Print output
+## Add text and variables
 
-Write variables to our handout, same syntax as Python's `print()`:
+Write to our handout using the same syntax as Python's `print()`:
 """
 for index in range(3):
-  doc.write('Iteration', index)
+  doc.add_text('Iteration', index)
+doc.show()
 
 """
-## Inline figures
+## Add Matplotlib figures
 
-Display matplotlib figures on the handout using `display()`:
+Display matplotlib figures on the handout:
 """
-fig, ax = plt.subplots(figsize=(6, 4))
+fig, ax = plt.subplots(figsize=(4, 3))
 ax.plot(np.arange(100))
 fig.tight_layout()
-doc.display(fig)  # Display the figure below this line.
+doc.add_figure(fig)
+doc.show()  # Display figure below this line.
 
-"""Multiple plots are inserted right after another."""
+"""
+Set the width to display multiple figures side by side:
+"""
 
 for iteration in range(3):
   fig, ax = plt.subplots(figsize=(3, 2))
-  ax.plot(np.sin(np.arange(100) / (iteration + 1)))
-  doc.display(fig, width=0.33)
+  ax.plot(np.sin(np.linspace(0, 20 / (iteration + 1), 100)))
+  doc.add_figure(fig, width=0.33)
+doc.show()
 
 """
 ## Exclude lines
 
-Hide code from the handout with the `# handout=exclude` comment:
+Hide code from the handout with the `# handout: exclude` comment:
 """
 
 # Invisible below:
-value = 13  # handout=exclude
+value = 13  # handout: exclude
 
 """
 ## View the handout
 
-Save the handout at the end of your script. Then open `output/index.html` in
-your browser.
+The handout is automatically saved when you call `doc.show()`. Just open
+`output/index.html` in your browser.
 """
-
-doc.save()
