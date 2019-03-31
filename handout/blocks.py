@@ -72,10 +72,4 @@ class Message(object):
     self._lines.append(line)
 
   def render(self):
-    lines = []
-    for line in self._lines:
-      while len(line.rstrip('\n')) > 79:
-        lines.append(line[:79] + '\n')
-        line = line[79:]
-      lines.append(line)
-    return '<pre class="message">' + ''.join(lines) + '</pre>\n'
+    return '<pre class="message">' + ''.join(self._lines) + '</pre>\n'

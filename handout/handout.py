@@ -35,7 +35,10 @@ class Handout(object):
     message = stream.getvalue()
     block = blocks.Message([message])
     self._pending.append(block)
-    self._logger.info(message.rstrip('\n'))
+    # Remove up to one line break since the logger adds one.
+    if message.endswith('\n'):
+      message = message[:-1]
+    self._logger.info(message)
 
   def add_html(self, string):
     block = blocks.Html([string])
