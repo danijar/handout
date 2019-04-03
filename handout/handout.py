@@ -28,9 +28,9 @@ class Handout(object):
     self._num_figures = 0
 
   def add_text(self, *args, **kwargs):
+    show = kwargs.pop('show', False)
     stream = io.StringIO()
-    if kwargs.get('file', sys.stdout) == sys.stdout:
-      kwargs['file'] = stream
+    kwargs['file'] = stream
     print(*args, **kwargs)  # Print into custom stream.
     message = stream.getvalue()
     block = blocks.Message([message])
@@ -39,13 +39,17 @@ class Handout(object):
     if message.endswith('\n'):
       message = message[:-1]
     self._logger.info(message)
+    if show:
+      self.show()
 
-  def add_html(self, string):
+  def add_html(self, string, show=False):
     block = blocks.Html([string])
     self._pending.append(block)
     self._logger.info(string)
+    if show:
+      self.show()
 
-  def add_figure(self, figure, width=None):
+  def add_figure(self, figure, width=None, show=False):
     filename = 'figure-{}.png'.format(self._num_figures)
     block = blocks.Image(filename, width)
     self._pending.append(block)
@@ -53,6 +57,8 @@ class Handout(object):
     figure.savefig(filename)
     self._logger.info('Saved figure: {}'.format(filename))
     self._num_figures += 1
+    if show:
+      self.show()
 
   def show(self):
     self._blocks[self._get_current_line()] += self._pending
