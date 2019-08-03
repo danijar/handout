@@ -27,8 +27,10 @@ Create the handout via `doc = handout.Handout(outdir)` to access these features:
 | Feature | Example |
 | ------- | ------- |
 | Add [Markdown text][markdown] as multi-line comments. | `"""Markdown text"""` |
-| Add print messages. | `doc.add_text('text:', variable)` |
-| Add matplotlib figures. | `doc.add_figure(fig, width=1.0)` |
+| Add text via `print()` syntax. | `doc.add_text('text:', variable)` |
+| Add image from array or url. | `doc.add_image(image, 'png', width=1)` |
+| Add video from array or url. | `doc.add_video(video, 'gif', fps=30, width=1)` |
+| Add matplotlib figure. | `doc.add_figure(fig, width=1)` |
 | Add custom HTML. | `doc.add_html(string)` |
 | Insert added items and save to `<outdir>/index.html`. | `doc.show()` |
 

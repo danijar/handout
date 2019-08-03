@@ -60,6 +60,21 @@ for iteration in range(3):
 doc.show()
 
 """
+## Add images and videos
+
+This requires the `imageio` pip package.
+"""
+image_a = np.random.uniform(0, 255, (200, 400, 3)).astype(np.uint8)
+image_b = np.random.uniform(0, 255, (100, 200, 1)).astype(np.uint8)
+doc.add_image(image_a, 'png', width=0.4)
+doc.add_image(image_b, 'jpg', width=0.4)
+doc.show()
+video = np.random.uniform(0, 255, (100, 64, 128, 3)).astype(np.uint8)
+doc.add_video(video, 'gif', fps=30, width=0.4)
+doc.add_video(video, 'mp4', fps=30, width=0.4)
+doc.show()
+
+"""
 ## Exclude lines
 
 Hide code from the handout with the `# handout: exclude` comment:

@@ -25,7 +25,9 @@ class Code(object):
     lines = '\n'.join(tools.strip_empty_lines(self._lines))
     if not lines:
       return ''
-    lines = lines.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    lines = lines.replace("&", "&amp;")
+    lines = lines.replace("<", "&lt;")
+    lines = lines.replace(">", "&gt;")
     return '<pre><code class="python">' + lines + '</code></pre>\n'
 
 
@@ -41,7 +43,9 @@ class Text(object):
     lines = '\n'.join(tools.strip_empty_lines(self._lines))
     if not lines:
       return ''
-    lines = lines.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    lines = lines.replace("&", "&amp;")
+    lines = lines.replace("<", "&lt;")
+    lines = lines.replace(">", "&gt;")
     return '<div class="markdown">' + lines + '</div>\n'
 
 
@@ -60,6 +64,25 @@ class Image(object):
     if self._width:
       output += ' width="{}%"'.format(round(100 * self._width, 2))
     output += ' />'
+    return output
+
+
+class Video(object):
+
+  def __init__(self, filename, width=None):
+    self._filename = filename
+    self._width = width
+
+  def append(self, line):
+    raise NotImplementedError()
+
+  def render(self):
+    output = '<video autoplay controls loop'
+    if self._width:
+      output += ' width="{}%"'.format(round(100 * self._width, 2))
+    output += '>'
+    output += '<source src="{}">'.format(self._filename)
+    output += '</video>'
     return output
 
 

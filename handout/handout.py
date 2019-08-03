@@ -1,11 +1,9 @@
 import collections
-import glob
 import inspect
 import io
 import logging
 import os
 import shutil
-import sys
 
 from handout import blocks
 
@@ -25,6 +23,8 @@ class Handout(object):
     module = inspect.getmodule(info.frame)
     self._source_name = info.filename
     self._source_text = inspect.getsource(module)
+    self._num_images = 0
+    self._num_videos = 0
     self._num_figures = 0
 
   def add_text(self, *args, **kwargs):
@@ -39,6 +39,37 @@ class Handout(object):
     if message.endswith('\n'):
       message = message[:-1]
     self._logger.info(message)
+    if show:
+      self.show()
+
+  def add_image(self, image, format='png', width=None, show=False):
+    if isinstance(image, str):
+      filename = image
+    else:
+      import imageio
+      filename = 'image-{}.{}'.format(self._num_images, format)
+      imageio.imsave(os.path.join(self._directory, filename), image)
+      self._logger.info('Saved image: {}'.format(filename))
+    block = blocks.Image(filename, width)
+    self._pending.append(block)
+    self._num_images += 1
+    if show:
+      self.show()
+
+  def add_video(self, video, format='gif', fps=30, width=None, show=False):
+    if isinstance(video, str):
+      filename = video
+    else:
+      import imageio
+      filename = 'video-{}.{}'.format(self._num_videos, format)
+      imageio.mimsave(os.path.join(self._directory, filename), video, fps=fps)
+      self._logger.info('Saved video: {}'.format(filename))
+    if filename.endswith('.gif'):
+      block = blocks.Image(filename, width)
+    else:
+      block = blocks.Video(filename, width)
+    self._pending.append(block)
+    self._num_videos += 1
     if show:
       self.show()
 

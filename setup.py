@@ -3,10 +3,11 @@ import setuptools
 
 setuptools.setup(
     name='handout',
-    version='0.8.0',
+    version='0.9.0',
     description='Add Markdown text and inline figures to your Python script.',
     url='http://github.com/danijar/handout',
     install_requires=[],
+    extras_require={'media': ['imageio']},
     packages=['handout'],
     package_data={'handout': ['data/*']},
     classifiers=[

@@ -13,12 +13,12 @@ html {
   background: #eee;
 }
 
-h1 { font-size: 2.0em; }
-h2 { font-size: 1.5em; }
-h3 { font-size: 1.3em; }
-h4 { font-size: 1.2em; }
-h5 { font-size: 1.1em; }
-h6 { font-size: 1.0em; }
+h1 { font-size: 2.0em; margin: 0.8em 0 0.4em; }
+h2 { font-size: 1.5em; margin: 0.8em 0 0.4em; }
+h3 { font-size: 1.3em; margin: 0.8em 0 0.4em; }
+h4 { font-size: 1.2em; margin: 0.8em 0 0.4em; }
+h5 { font-size: 1.1em; margin: 0.8em 0 0.4em; }
+h6 { font-size: 1.0em; margin: 0.8em 0 0.4em; }
 
 article {
   max-width: 48.5em;  /* Fit 79 characters. */
@@ -30,10 +30,21 @@ article {
   background: #fff;
   border-radius: .3em;
   border: 1px solid #ddd;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 article > * {
   text-align: left;
+}
+
+article > pre, article > div p {
+  margin: 0 0 1em;
+}
+
+article > div, article > pre, article > .message {
+  width: 100%;
 }
 
 code {
@@ -49,6 +60,7 @@ code {
 }
 
 img {
+  margin: 0 0 1em;
   max-width: 100%;
   display: inline-block;
 }
