@@ -7,18 +7,23 @@
     border: none !important;
     font-size: 13px !important;
   }
+  article {
+    /* This prevents page breaks within images. However, it also means images
+     * in one line will be centered without margin rather than spaced evenly. */
+    display: block !important;
+  }
 }
 
 html {
   background: #eee;
 }
 
-h1 { font-size: 2.0em; margin: 0.8em 0 0.4em; }
-h2 { font-size: 1.5em; margin: 0.8em 0 0.4em; }
-h3 { font-size: 1.3em; margin: 0.8em 0 0.4em; }
-h4 { font-size: 1.2em; margin: 0.8em 0 0.4em; }
-h5 { font-size: 1.1em; margin: 0.8em 0 0.4em; }
-h6 { font-size: 1.0em; margin: 0.8em 0 0.4em; }
+h1 { font-size: 2.0em; margin: 0.4em 0; }
+h2 { font-size: 1.5em; margin: 0.4em 0; }
+h3 { font-size: 1.3em; margin: 0.4em 0; }
+h4 { font-size: 1.2em; margin: 0.4em 0; }
+h5 { font-size: 1.1em; margin: 0.4em 0; }
+h6 { font-size: 1.0em; margin: 0.4em 0; }
 
 article {
   max-width: 48.5em;  /* Fit 79 characters. */
@@ -39,12 +44,16 @@ article > * {
   text-align: left;
 }
 
-article > pre, article > div p {
+article > div, article > pre, article > .message {
+  width: 100%;
+}
+
+article > div p, article > pre, article > .message {
   margin: 0 0 1em;
 }
 
-article > div, article > pre, article > .message {
-  width: 100%;
+article > .message + .message {
+  margin-top: -1em;
 }
 
 code {
@@ -54,13 +63,12 @@ code {
 }
 
 .message {
-  margin: 0;
   white-space: pre-wrap;
   word-break: break-all;
 }
 
-img {
+img, video {
+  display: inline-block;
   margin: 0 0 1em;
   max-width: 100%;
-  display: inline-block;
 }
