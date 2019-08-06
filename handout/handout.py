@@ -10,9 +10,10 @@ from handout import blocks
 
 class Handout(object):
 
-  def __init__(self, directory):
+  def __init__(self, directory, title="Handout"):
     self._directory = os.path.expanduser(directory)
     os.makedirs(self._directory, exist_ok=True)
+    self._title = title
     self._blocks = collections.defaultdict(list)
     self._pending = []
     self._logger = logging.getLogger('handout')
@@ -113,7 +114,7 @@ class Handout(object):
     content.append(blocks.Html([
         '<html>',
         '<head>',
-        '<title>Handout</title>',
+        '<title>{}</title>'.format(self._title),
         '<link rel="stylesheet" href="style.css">',
         '<link rel="stylesheet" href="highlight.css">',
         '<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">',
