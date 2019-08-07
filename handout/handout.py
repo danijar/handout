@@ -10,7 +10,7 @@ from handout import blocks
 
 class Handout(object):
 
-  def __init__(self, directory, title="Handout"):
+  def __init__(self, directory, title='Handout'):
     self._directory = os.path.expanduser(directory)
     os.makedirs(self._directory, exist_ok=True)
     self._title = title
