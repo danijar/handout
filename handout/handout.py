@@ -6,6 +6,7 @@ import os
 import shutil
 
 from handout import blocks
+from handout import tools
 
 
 class Handout(object):
@@ -16,7 +17,7 @@ class Handout(object):
     self._title = title
     self._blocks = collections.defaultdict(list)
     self._pending = []
-    self._logger = logging.getLogger('handout')
+    self._logger = tools.get_logger()
     for info in inspect.stack():
       if info.filename == __file__:
         continue
