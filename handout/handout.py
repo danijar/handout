@@ -16,6 +16,9 @@ class Handout(object):
     self._title = title
     self._blocks = collections.defaultdict(list)
     self._pending = []
+    # The logger is configured in handout/__init__.py to make it available
+    # right after importing the handout package. This allows the user to change
+    # the logging level, message format, etc.
     self._logger = logging.getLogger('handout')
     for info in inspect.stack():
       if info.filename == __file__:
