@@ -1,4 +1,5 @@
 import setuptools
+import pathlib
 
 
 setuptools.setup(
@@ -6,6 +7,8 @@ setuptools.setup(
     version='1.0.0',
     description='Turn Python scripts into handouts with Markdown and figures',
     url='http://github.com/danijar/handout',
+    long_description=pathlib.Path('README.md').read_text(),
+    long_description_content_type='text/markdown',
     install_requires=[],
     extras_require={'media': ['imageio']},
     packages=['handout'],
