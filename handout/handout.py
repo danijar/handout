@@ -84,6 +84,11 @@ class Handout(object):
     if show:
       self.show()
 
+  def add_style(self, filepath):
+      filename = os.path.basename(filepath)
+      shutil.copyfile(filepath, os.path.join(self._directory, filename))
+      self.add_html('<link rel="stylesheet" href="{}">'.format(filename))
+
   def add_figure(self, figure, width=None, show=False):
     filename = 'figure-{}.png'.format(self._num_figures)
     block = blocks.Image(filename, width)

@@ -14,6 +14,11 @@ import numpy as np
 
 doc = handout.Handout('output')
 
+""" Add Custom style from a filepath"""
+doc.add_style(r'.\handout\data\bootstrap.css')  # handout: exclude
+doc.add_html('<button type="button" class="btn btn-warning">Warning</button>')
+doc.add_html('<button type="button" class="btn btn-danger">Danger</button>')
+
 """
 ## Markdown comments
 
@@ -35,7 +40,7 @@ Text blocks support [Markdown formatting][1], for example:
 Write to our handout using the same syntax as Python's `print()`:
 """
 for index in range(3):
-  doc.add_text('Iteration', index)
+    doc.add_text('Iteration', index)
 doc.show()
 
 """
@@ -54,9 +59,9 @@ Set the width to display multiple figures side by side:
 """
 
 for iteration in range(3):
-  fig, ax = plt.subplots(figsize=(3, 2))
-  ax.plot(np.sin(np.linspace(0, 20 / (iteration + 1), 100)))
-  doc.add_figure(fig, width=0.33)
+    fig, ax = plt.subplots(figsize=(3, 2))
+    ax.plot(np.sin(np.linspace(0, 20 / (iteration + 1), 100)))
+    doc.add_figure(fig, width=0.33)
 doc.show()
 
 """
@@ -72,6 +77,7 @@ doc.show()
 video = np.random.uniform(0, 255, (100, 64, 128, 3)).astype(np.uint8)
 doc.add_video(video, 'gif', fps=30, width=0.4)
 doc.add_video(video, 'mp4', fps=30, width=0.4)
+
 doc.show()
 
 """
