@@ -12,7 +12,7 @@ import numpy as np
 
 """Start your handout with an output directory."""
 
-doc = handout.Handout('output')
+doc = handout.Handout('output',title='yabalabadaba')
 
 """ Add Custom style from a filepath"""
 doc.add_style(r'.\handout\data\bootstrap.css')  # handout: exclude
