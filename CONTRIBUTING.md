@@ -1,4 +1,4 @@
-#Contributing Instructions
+# Contributing Instructions
 
 * We welcome all our potential contributors.
 * We request you to check out tthe Github issues and join the discussions
