@@ -26,7 +26,7 @@ Create the handout via `doc = handout.Handout(outdir)` to access these features:
 
 | Feature | Example |
 | ------- | ------- |
-| Add [Markdown text][markdown] as multi-line comments. | `"""Markdown text"""` |
+| Add [Markdown text][markdown] as triple-quote comments. | `"""Markdown text"""` |
 | Add text via `print()` syntax. | `doc.add_text('text:', variable)` |
 | Add image from array or url. | `doc.add_image(image, 'png', width=1)` |
 | Add video from array or url. | `doc.add_video(video, 'gif', fps=30, width=1)` |
