@@ -84,6 +84,11 @@ Hide code from the handout with the `# handout: exclude` comment:
 value = 13  # handout: exclude
 
 """
+Exclude whole ranges between `# handout: begin-exclude` and `# handout:
+end-exclude` lines.
+"""
+
+"""
 ## View the handout
 
 The handout is automatically saved when you call `doc.show()`. Just open

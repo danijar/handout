@@ -130,6 +130,7 @@ class Handout(object):
         '<article>',
     ]))
     content.append(blocks.Code())
+    excluding = False  # Range exclude.
     for lineno, line in enumerate(source.split('\n')):
       lineno += 1  # Line numbers are 1-based indices.
       line = line.rstrip()
@@ -141,7 +142,17 @@ class Handout(object):
         content[-1].append(line)
         content.append(blocks.Code())
         continue
-      if not line.endswith('# handout: exclude'):
+      if isinstance(content[-1], blocks.Text):
+        content[-1].append(line)
+      elif line == '# handout: begin-exclude':
+        excluding = True
+      elif line == '# handout: end-exclude':
+        excluding = False
+      elif excluding:
+        pass
+      elif line.endswith('# handout: exclude'):
+        pass
+      else:
         content[-1].append(line)
       blocks_ = self._blocks[lineno]
       if blocks_:
