@@ -2,17 +2,26 @@ import collections
 import inspect
 import io
 import logging
-import os
+import pathlib
 import shutil
 
 from handout import blocks
 
 
+MATHJAX_SCRIPTS = (
+    '<script type="text/x-mathjax-config">'
+    'MathJax.Hub.Config({tex2jax: {inlineMath: [["$","$"]]}});'
+    '</script>'
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/'
+    'MathJax.js?config=TeX-MML-AM_CHTML" async></script>'
+)
+
+
 class Handout(object):
 
   def __init__(self, directory, title='Handout'):
-    self._directory = os.path.expanduser(directory)
-    os.makedirs(self._directory, exist_ok=True)
+    self._directory = pathlib.Path(directory).expanduser()
+    self._directory.mkdir(exist_ok=True)
     self._title = title
     self._blocks = collections.defaultdict(list)
     self._pending = []
@@ -52,7 +61,7 @@ class Handout(object):
     else:
       import imageio
       filename = 'image-{}.{}'.format(self._num_images, format)
-      imageio.imsave(os.path.join(self._directory, filename), image)
+      imageio.imsave(self._directory / filename, image)
       self._logger.info('Saved image: {}'.format(filename))
     block = blocks.Image(filename, width)
     self._pending.append(block)
@@ -66,7 +75,7 @@ class Handout(object):
     else:
       import imageio
       filename = 'video-{}.{}'.format(self._num_videos, format)
-      imageio.mimsave(os.path.join(self._directory, filename), video, fps=fps)
+      imageio.mimsave(self._directory / filename, video, fps=fps)
       self._logger.info('Saved video: {}'.format(filename))
     if filename.endswith('.gif'):
       block = blocks.Image(filename, width)
@@ -88,7 +97,7 @@ class Handout(object):
     filename = 'figure-{}.png'.format(self._num_figures)
     block = blocks.Image(filename, width)
     self._pending.append(block)
-    filename = os.path.join(self._directory, filename)
+    filename = self._directory / filename
     figure.savefig(filename)
     self._logger.info('Saved figure: {}'.format(filename))
     self._num_figures += 1
@@ -99,22 +108,22 @@ class Handout(object):
     self._blocks[self._get_current_line()] += self._pending
     self._pending = []
     output = self._generate(self._source_text)
-    filename = os.path.join(self._directory, 'index.html')
+    filename = self._directory / 'index.html'
     with open(filename, 'w') as f:
       f.write(output)
-    datadir = os.path.join(os.path.dirname(__file__), 'data')
-    names = [
-        'style.css', 'highlight.css', 'highlight.js', 'marked.js', 'script.js',
-        'favicon.ico']
-    for name in names:
-      shutil.copyfile(
-          os.path.join(datadir, name),
-          os.path.join(self._directory, name))
+    datadir = pathlib.Path(__file__).parent / 'data'
+    for source in datadir.glob('**/*'):
+      target = self._directory / source.relative_to(datadir)
+      if source.is_dir() or target.exists():
+        continue
+      target.parent.mkdir(exist_ok=True)
+      shutil.copyfile(source, target)
     self._logger.info("Handout written to: {}".format(filename))
 
   def _generate(self, source):
     content = []
     content.append(blocks.Html([
+        '<!DOCTYPE html>',
         '<html>',
         '<head>',
         '<title>{}</title>'.format(self._title),
@@ -125,6 +134,7 @@ class Handout(object):
         '<script src="script.js"></script>',
         '<script src="highlight.js"></script>',
         '<script>hljs.initHighlightingOnLoad();</script>',
+        MATHJAX_SCRIPTS,
         '</head>',
         '<body>',
         '<article>',

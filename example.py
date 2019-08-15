@@ -25,6 +25,7 @@ Text blocks support [Markdown formatting][1], for example:
 - Hyperlinks
 - Inline `code()` snippets
 - **Bold** and *italic*
+- LaTeX math $f(x)=x^2$
 
 [1]: https://commonmark.org/help/
 """
