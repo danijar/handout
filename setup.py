@@ -4,7 +4,7 @@ import pathlib
 
 setuptools.setup(
     name='handout',
-    version='1.0.0',
+    version='1.1.0',
     description='Turn Python scripts into handouts with Markdown and figures',
     url='http://github.com/danijar/handout',
     long_description=pathlib.Path('README.md').read_text(),
