@@ -21,7 +21,7 @@ class Handout(object):
 
   def __init__(self, directory, title='Handout'):
     self._directory = pathlib.Path(directory).expanduser()
-    self._directory.mkdir(exist_ok=True)
+    self._directory.mkdir(parents=True, exist_ok=True)
     self._title = title
     self._blocks = collections.defaultdict(list)
     self._pending = []
