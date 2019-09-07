@@ -52,10 +52,8 @@ class Handout(object):
     if message.endswith('\n'):
       message = message[:-1]
     self._logger.info(message)
-    if show:
-      self.show()
 
-  def add_image(self, image, format='png', width=None, show=False):
+  def add_image(self, image, format='png', width=None):
     if isinstance(image, str):
       filename = image
     else:
@@ -66,10 +64,8 @@ class Handout(object):
     block = blocks.Image(filename, width)
     self._pending.append(block)
     self._num_images += 1
-    if show:
-      self.show()
 
-  def add_video(self, video, format='gif', fps=30, width=None, show=False):
+  def add_video(self, video, format='gif', fps=30, width=None):
     if isinstance(video, str):
       filename = video
     else:
@@ -83,17 +79,13 @@ class Handout(object):
       block = blocks.Video(filename, width)
     self._pending.append(block)
     self._num_videos += 1
-    if show:
-      self.show()
 
-  def add_html(self, string, show=False):
+  def add_html(self, string):
     block = blocks.Html([string])
     self._pending.append(block)
     self._logger.info(string)
-    if show:
-      self.show()
 
-  def add_figure(self, figure, width=None, show=False):
+  def add_figure(self, figure, width=None):
     filename = 'figure-{}.png'.format(self._num_figures)
     block = blocks.Image(filename, width)
     self._pending.append(block)
@@ -101,8 +93,6 @@ class Handout(object):
     figure.savefig(filename)
     self._logger.info('Saved figure: {}'.format(filename))
     self._num_figures += 1
-    if show:
-      self.show()
 
   def show(self):
     self._blocks[self._get_current_line()] += self._pending
