@@ -4,6 +4,7 @@ import io
 import logging
 import pathlib
 import shutil
+import os
 
 from handout import blocks
 
@@ -59,7 +60,7 @@ class Handout(object):
     else:
       import imageio
       filename = 'image-{}.{}'.format(self._num_images, format)
-      imageio.imsave(self._directory / filename, image)
+      imageio.imsave(os.path.join(self._directory, filename), image)
       self._logger.info('Saved image: {}'.format(filename))
     block = blocks.Image(filename, width)
     self._pending.append(block)
@@ -71,7 +72,7 @@ class Handout(object):
     else:
       import imageio
       filename = 'video-{}.{}'.format(self._num_videos, format)
-      imageio.mimsave(self._directory / filename, video, fps=fps)
+      imageio.mimsave(os.path.join(self._directory, filename), video, fps=fps)
       self._logger.info('Saved video: {}'.format(filename))
     if filename.endswith('.gif'):
       block = blocks.Image(filename, width)
@@ -89,7 +90,7 @@ class Handout(object):
     filename = 'figure-{}.png'.format(self._num_figures)
     block = blocks.Image(filename, width)
     self._pending.append(block)
-    filename = self._directory / filename
+    filename = os.path.join(self._directory, filename)
     figure.savefig(filename)
     self._logger.info('Saved figure: {}'.format(filename))
     self._num_figures += 1
@@ -98,7 +99,7 @@ class Handout(object):
     self._blocks[self._get_current_line()] += self._pending
     self._pending = []
     output = self._generate(self._source_text)
-    filename = self._directory / 'index.html'
+    filename = os.path.join(self._directory, 'index.html')
     with open(filename, 'w') as f:
       f.write(output)
     datadir = pathlib.Path(__file__).parent / 'data'
