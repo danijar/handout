@@ -95,4 +95,8 @@ class Message(object):
     self._lines.append(line)
 
   def render(self):
-    return '<pre class="message">' + ''.join(self._lines) + '</pre>\n'
+    lines = ''.join(self._lines)
+    lines = lines.replace("&", "&amp;")
+    lines = lines.replace("<", "&lt;")
+    lines = lines.replace(">", "&gt;")
+    return '<pre class="message">' + lines + '</pre>\n'
