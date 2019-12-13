@@ -54,8 +54,8 @@ class Handout(object):
     self._logger.info(message)
 
   def add_image(self, image, format='png', width=None, **imageio_args):
-    if isinstance(image, str):
-      filename = image
+    if isinstance(image, str) or isinstance(image, pathlib.Path):
+      filename = str(video)
     else:
       import imageio
       filename = 'image-{}.{}'.format(self._num_images, format)
@@ -66,8 +66,8 @@ class Handout(object):
     self._num_images += 1
 
   def add_video(self, video, format='gif', fps=30, width=None, **imageio_args):
-    if isinstance(video, str):
-      filename = video
+    if isinstance(video, str) or isinstance(video, pathlib.Path):
+      filename = str(video)
     else:
       import imageio
       filename = 'video-{}.{}'.format(self._num_videos, format)
