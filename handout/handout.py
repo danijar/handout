@@ -53,7 +53,7 @@ class Handout(object):
       message = message[:-1]
     self._logger.info(message)
 
-  def add_image(self, image, format='png', width=None):
+  def add_image(self, image, format='png', width=None, **imageio_args):
     if isinstance(image, str):
       filename = image
     else:
@@ -65,13 +65,13 @@ class Handout(object):
     self._pending.append(block)
     self._num_images += 1
 
-  def add_video(self, video, format='gif', fps=30, width=None):
+  def add_video(self, video, format='gif', fps=30, width=None, **imageio_args):
     if isinstance(video, str):
       filename = video
     else:
       import imageio
       filename = 'video-{}.{}'.format(self._num_videos, format)
-      imageio.mimsave(self._directory / filename, video, fps=fps)
+      imageio.mimsave(self._directory / filename, video, fps=fps, **imageio_args)
       self._logger.info('Saved video: {}'.format(filename))
     if filename.endswith('.gif'):
       block = blocks.Image(filename, width)
