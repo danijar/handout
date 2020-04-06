@@ -15,8 +15,8 @@ editor.
 You use Python Handout as a library inside a normal Python program:
 
 1. Install via `pip3 install -U handout`.
-2. Run your script via `python3 script.py`. (You can start with the `example.py`
-   from the repository.)
+2. Run your script via `python3 script.py`. (You can start with
+   `examples/start.py` from the repository.)
 3. Open `output/index.html` in your browser to view the result.
 4. Iterate and refresh your browser.
 

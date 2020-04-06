@@ -12,7 +12,7 @@ import numpy as np
 
 """Start your handout with an output directory."""
 
-doc = handout.Handout('output')
+doc = handout.Handout('output/start')
 
 """
 ## Markdown comments
