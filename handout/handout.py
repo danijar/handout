@@ -99,7 +99,7 @@ class Handout(object):
     self._pending = []
     output = self._generate(self._source_text)
     filename = self._directory / 'index.html'
-    with open(filename, 'w') as f:
+    with open(str(filename), 'w') as f:
       f.write(output)
     datadir = pathlib.Path(__file__).parent / 'data'
     for source in datadir.glob('**/*'):
@@ -107,7 +107,7 @@ class Handout(object):
       if source.is_dir() or target.exists():
         continue
       target.parent.mkdir(exist_ok=True)
-      shutil.copyfile(source, target)
+      shutil.copyfile(str(source), str(target))
     self._logger.info("Handout written to: {}".format(filename))
 
   def _generate(self, source):
