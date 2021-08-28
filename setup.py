@@ -9,7 +9,11 @@ setuptools.setup(
     url='http://github.com/danijar/handout',
     long_description=pathlib.Path('README.md').read_text(),
     long_description_content_type='text/markdown',
-    install_requires=[],
+    install_requires=[
+        'matplotlib',
+        'imageio',
+        'imageio-ffmpeg'
+    ],
     extras_require={'media': ['imageio']},
     packages=['handout'],
     package_data={'handout': ['data/*']},
